@@ -6,11 +6,38 @@ class Currency {
 }
 
 class CurrencyConverter {
-    constructor() {}
+    constructor(apiUrl) {
+        this.apiUrl = apiUrl;
+        this.currencies = [];
+    }
+    
+    async getCurrencies() {
+        try {
+            const response = await fetch(`${this.apiUrl}/currencies`);
+            const data = await response.json();
+            Object.entries(data).forEach(([code, name]) => {
+                const currencyInstance = new Currency(code, name);
+                this.currencies.push(currencyInstance);
+            });
+        } catch (error) {
+            console.error("Error al obtener la lista de monedas:", error);
+        }
+    }
 
-    getCurrencies(apiUrl) {}
+    async convertCurrency(amount, fromCurrency, toCurrency) {
+        if (fromCurrency.code === toCurrency.code) {
+            return amount;
+        }
 
-    convertCurrency(amount, fromCurrency, toCurrency) {}
+        try {
+            const response = await fetch(`${this.apiUrl}/latest?amount=${amount}&from=${fromCurrency.code}&to=${toCurrency.code}`);
+            const data = await response.json();
+            return data.rates[toCurrency.code];
+        } catch (error) {
+            console.error("Error al realizar la conversión:", error);
+            return null;
+        }
+    }
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
