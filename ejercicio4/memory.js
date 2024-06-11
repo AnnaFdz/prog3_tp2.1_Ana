@@ -31,6 +31,20 @@ class Card {
         const cardElement = this.element.querySelector(".card");
         cardElement.classList.remove("flipped");
     }
+    
+    toggleFlip() {
+        if (this.isFlipped == false) {
+            this.isFlipped = true;
+            this.#flip();
+        } else {
+            this.isFlipped = false;
+            this.#unflip();
+        }
+      
+    }
+    matches(otherCard) {
+        return this.name === otherCard.name;
+    }
 }
 
 class Board {
@@ -59,6 +73,7 @@ class Board {
     }
 
     render() {
+        
         this.#setGridColumns();
         this.gameBoardElement.innerHTML = "";
         this.cards.forEach((card) => {
@@ -74,6 +89,28 @@ class Board {
             this.onCardClick(card);
         }
     }
+    
+    shuffleCards() {
+
+        
+        // let cardsOriginal = this.cards.slice();
+        // console.log(cardsOriginal);
+      let randomizeIndex = this.cards.slice();
+      console.log(randomizeIndex);
+      randomizeIndex.sort(() => Math.random() - 0.5);
+      for (let i = 0; i < this.cards.length; i++) {
+        this.cards[i] = randomizeIndex[i];
+    }
+    //console.log(this.cards);
+    
+    
+    }
+    reset() {
+        this.shuffleCards();
+        this.cards.forEach(card => card.unflip());
+        this.render();
+    }
+    
 }
 
 class MemoryGame {
