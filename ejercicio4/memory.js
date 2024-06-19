@@ -96,7 +96,7 @@ class Board {
         // let cardsOriginal = this.cards.slice();
         // console.log(cardsOriginal);
       let randomizeIndex = this.cards.slice();
-      console.log(randomizeIndex);
+    //   console.log(randomizeIndex);
       randomizeIndex.sort(() => Math.random() - 0.5);
       for (let i = 0; i < this.cards.length; i++) {
         this.cards[i] = randomizeIndex[i];
@@ -105,9 +105,16 @@ class Board {
     
     
     }
+    flipDownAllCards() {
+        this.cards.forEach((card) => {
+            if (card.isFlipped) {
+                card.toggleFlip();
+            }
+        });
+    }
     reset() {
         this.shuffleCards();
-        this.cards.forEach(card => card.unflip());
+        this.flipDownAllCards();
         this.render();
     }
     
@@ -138,6 +145,25 @@ class MemoryGame {
                 setTimeout(() => this.checkForMatch(), this.flipDuration);
             }
         }
+    }
+    checkForMatch() {
+        const [card1, card2] = this.flippedCards;
+        if (card1.matches(card2)) {
+            this.matchedCards.push(card1, card2);
+            this.flippedCards = [];
+            if (this.matchedCards.length === this.board.cards.length) {
+                alert("¡Has encontrado todas las parejas! Fin del Juego!");
+                // this.resetGame();
+            }
+        } else {
+            this.flippedCards.forEach((card) => card.toggleFlip());
+            this.flippedCards = [];
+        }
+    }
+    resetGame() {
+        this.flippedCards = [];
+        this.matchedCards = [];
+        this.board.reset();
     }
 }
 
