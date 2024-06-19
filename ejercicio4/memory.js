@@ -134,9 +134,13 @@ class MemoryGame {
         this.flipDuration = flipDuration;
         this.board.onCardClick = this.#handleCardClick.bind(this);
         this.board.reset();
+        this.count = 0;
+        this.updateCounter()
     }
 
     #handleCardClick(card) {
+        this.count++;
+        this.updateCounter();
         if (this.flippedCards.length < 2 && !card.isFlipped) {
             card.toggleFlip();
             this.flippedCards.push(card);
@@ -160,10 +164,15 @@ class MemoryGame {
             this.flippedCards = [];
         }
     }
+    updateCounter() {
+        document.getElementById("counter").textContent = `Movimientos: ${this.count}`;
+    }
     resetGame() {
         this.flippedCards = [];
         this.matchedCards = [];
         this.board.reset();
+        this.count = 0;
+        this.updateCounter();
     }
 }
 
@@ -183,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ]);
     const board = new Board(cards);
     const memoryGame = new MemoryGame(board, 1000);
-
+    
     document.getElementById("restart-button").addEventListener("click", () => {
         memoryGame.resetGame();
     });
