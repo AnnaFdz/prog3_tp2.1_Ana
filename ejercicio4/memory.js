@@ -136,16 +136,22 @@ class MemoryGame {
         this.board.reset();
         this.count = 0;
         this.updateCounter()
+        this.time = 0;  
+        this.timerInterval = null;
+        this.updateTimer();
     }
 
     #handleCardClick(card) {
+        if (!this.timerInterval) {  
+            this.startTimer();
+        }
         this.count++;
         this.updateCounter();
         if (this.flippedCards.length < 2 && !card.isFlipped) {
             card.toggleFlip();
             this.flippedCards.push(card);
 
-            if (this.flippedCards.length === 2) {
+            if (this.flippedCards.length === 2) {               
                 setTimeout(() => this.checkForMatch(), this.flipDuration);
             }
         }
@@ -156,6 +162,7 @@ class MemoryGame {
             this.matchedCards.push(card1, card2);
             this.flippedCards = [];
             if (this.matchedCards.length === this.board.cards.length) {
+                this.stopTimer();
                 alert("¡Has encontrado todas las parejas! Fin del Juego!");
                 // this.resetGame();
             }
@@ -167,12 +174,47 @@ class MemoryGame {
     updateCounter() {
         document.getElementById("counter").textContent = `Movimientos: ${this.count}`;
     }
+    updateTimer() {
+        // document.getElementById("timer").textContent = `Tiempo: ${}s`;
+                
+        const hoursLabel = document.getElementById("hours");
+        const minutesLabel = document.getElementById("minutes");
+        const secondsLabel = document.getElementById("seconds");
+        secondsLabel.innerHTML = this.formatTime(this.time% 60);
+        minutesLabel.innerHTML = this.formatTime(parseInt(this.time/ 60));
+        hoursLabel.innerHTML = this.formatTime(parseInt(this.time/3600));
+
+    }
+
+    startTimer() {
+        this.timerInterval = setInterval(() => {
+            this.time++;
+            this.updateTimer();
+        }, 1000);
+    }
+
+    stopTimer() {
+        clearInterval(this.timerInterval);
+    }
+    formatTime(val) {
+        const valString = val + "";
+        if (valString.length < 2) {
+          return "0" + valString;
+        } else {
+          return valString;
+         }
+
+    }
     resetGame() {
         this.flippedCards = [];
         this.matchedCards = [];
         this.board.reset();
         this.count = 0;
         this.updateCounter();
+        this.time = 0;   
+        this.stopTimer();
+        this.updateTimer(); 
+        this.timerInterval = null;
     }
 }
 
