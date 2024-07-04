@@ -45,6 +45,12 @@ class Card {
     matches(otherCard) {
         return this.name === otherCard.name;
     }
+    disableClick() {
+        this.element.querySelector(".card").style.pointerEvents = "none";
+    }
+    enableClick() {
+        this.element.querySelector(".card").style.pointerEvents = "auto";
+    }
 }
 
 class Board {
@@ -165,6 +171,7 @@ class MemoryGame {
                 this.stopTimer();
                 alert("¡Has encontrado todas las parejas! Fin del Juego!");
                 // this.resetGame();
+                this.board.cards.forEach(card => card.disableClick());
             }
         } else {
             this.flippedCards.forEach((card) => card.toggleFlip());
@@ -215,6 +222,7 @@ class MemoryGame {
         this.stopTimer();
         this.updateTimer(); 
         this.timerInterval = null;
+        this.board.cards.forEach(card => card.enableClick()); 
     }
 }
 
